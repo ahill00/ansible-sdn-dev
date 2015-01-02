@@ -1,0 +1,7 @@
+- name: clone mininet source
+  git: repo=https://github.com/mininet/mininet.git dest=/home/vagrant/sdn/mininet
+       version={{ mininet_version|default('master') }}
+
+- name: install mininet
+  command: /home/vagrant/sdn/mininet/util/install.sh -{{ mininet_install_args|default('a') }}
+  sudo: yes

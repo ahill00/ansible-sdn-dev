@@ -1,0 +1,28 @@
+- name: install python-apt
+  command: apt-get install python-apt -y
+  sudo: yes
+
+- name: install additional packages
+  apt: pkg={{ item }} state=present
+       update_cache=yes
+       cache_valid_time=3600
+  with_items:
+    - git
+    - bash-completion
+    - htop
+    - strace
+    - python-virtualenv
+    - tmux
+    - vim
+  sudo: yes
+
+- name: create sdn venv
+  command: virtualenv sdn
+
+- name: add vimrc
+  copy: src=vimrc dest=/home/vagrant/.vimrc
+
+- name: add venv to bashrc
+  lineinfile: dest=/home/vagrant/.bashrc
+              line='source /home/vagrant/sdn/bin/activate'
+              state=present

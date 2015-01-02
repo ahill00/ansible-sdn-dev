@@ -1,0 +1,29 @@
+- name: configure and make ovs
+  command: "chdir=/home/vagrant/sdn/ovs/ {{ item }}"
+  with_items:
+  - ./boot.sh
+  - ./configure
+  - /usr/bin/make
+
+- name: install userspace
+  command: "chdir=/home/vagrant/sdn/ovs/ make install"
+  sudo: yes
+
+- name: install kernel modules
+  command: "chdir=/home/vagrant/sdn/ovs/ make modules_install"
+  sudo: yes
+
+- name: load ovs kernel module
+  command: /sbin/modprobe openvswitch
+  sudo: yes
+
+- name: create ovsdb directory
+  file: path=/usr/local/etc/openvswitch
+        state=directory
+
+- name: create ovsdb
+  command: chdir=/home/vagrant/sdn/ovs/ ovsdb-tool create /usr/local/etc/openvswitch/conf.db vswitchd/vswitch.ovsschema
+           creates=/usr/local/etc/openvswitch/conf.db
+  sudo: yes
+
+

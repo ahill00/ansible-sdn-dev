@@ -1,0 +1,18 @@
+- name: install requirements
+  apt: pkg={{ item }}
+       state=present
+  sudo: yes
+  with_items:
+    - libxml2-dev
+    - libxslt1-dev
+    - python-dev
+
+- name: clone ryu source
+  git: repo=https://github.com/osrg/ryu.git dest=/home/vagrant/sdn/ryu
+
+- name: copy venv install script
+  copy: src=install-ryu dest=/home/vagrant/sdn/ryu/install-ryu.sh
+        mode=0775
+
+- name: install ryu to venv
+  shell: "chdir=/home/vagrant/sdn/ryu/ ./install-ryu.sh"

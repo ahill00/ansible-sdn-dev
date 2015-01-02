@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+source /home/vagrant/sdn/bin/activate
+cd /home/vagrant/sdn/ryu
+python setup.py install
+cd -
