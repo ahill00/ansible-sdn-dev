@@ -1,5 +1,7 @@
-- name: install python-apt
-  command: apt-get install python-apt -y
+- name: Install apt python
+  command: apt-get install -y python-apt
+  register: result
+  until: result.rc == 1 or result.stdout.find("already the newest") != -1
   sudo: yes
 
 - name: install additional packages

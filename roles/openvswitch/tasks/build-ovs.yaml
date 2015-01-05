@@ -1,20 +1,26 @@
-- name: configure and make ovs
+- name: bootstrap ovs compilation
+  command: "chdir=/home/vagrant/sdn/ovs/ ./boot.sh
+           creates=/home/vagrant/sdn/ovs/configure"
+  register: bootstrap
+
+- name: configure ovs
   command: "chdir=/home/vagrant/sdn/ovs/ {{ item }}"
   with_items:
-  - ./boot.sh
-  - ./configure
-  - /usr/bin/make
+    - ./configure
+    - /usr/bin/make
+  when: bootstrap.changed
 
-- name: install userspace
+- name: install userspace and kernel modules
   command: "chdir=/home/vagrant/sdn/ovs/ make install"
-  sudo: yes
-
-- name: install kernel modules
-  command: "chdir=/home/vagrant/sdn/ovs/ make modules_install"
+  with_items:
+    - /usr/bin/make install
+    - /usr/bin/make modules_install
+  when: bootstrap.changed
   sudo: yes
 
 - name: load ovs kernel module
-  command: /sbin/modprobe openvswitch
+  modprobe: name=openvswitch state=present
+  when: bootstrap.changed
   sudo: yes
 
 - name: create ovsdb directory

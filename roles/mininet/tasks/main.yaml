@@ -2,6 +2,13 @@
   git: repo=https://github.com/mininet/mininet.git dest=/home/vagrant/sdn/mininet
        version={{ mininet_version|default('master') }}
 
+- name: check current mininet version
+  command: mn --version
+  register: mn_version
+  sudo: yes
+  ignore_errors: True
+
 - name: install mininet
   command: /home/vagrant/sdn/mininet/util/install.sh -{{ mininet_install_args|default('a') }}
   sudo: yes
+  when: mininet_version is not defined or mn_version.stdout != mininet_version
